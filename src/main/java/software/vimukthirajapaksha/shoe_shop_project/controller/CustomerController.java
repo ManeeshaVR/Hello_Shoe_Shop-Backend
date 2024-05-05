@@ -18,10 +18,10 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @GetMapping("/health")
-    public String healthTest(){
-        logger.info("Health test endpoint called");
-        return "Customer Health Test";
+    @GetMapping("/check")
+    public String checkTest(){
+        logger.info("Customer Checked");
+        return "Customer Check Test";
     }
 
     @PostMapping
