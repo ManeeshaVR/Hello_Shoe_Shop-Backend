@@ -5,8 +5,10 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 import software.vimukthirajapaksha.shoe_shop_project.dto.CustomerDTO;
+import software.vimukthirajapaksha.shoe_shop_project.dto.EmployeeDTO;
 import software.vimukthirajapaksha.shoe_shop_project.dto.SupplierDTO;
 import software.vimukthirajapaksha.shoe_shop_project.entity.CustomerEntity;
+import software.vimukthirajapaksha.shoe_shop_project.entity.EmployeeEntity;
 import software.vimukthirajapaksha.shoe_shop_project.entity.SupplierEntity;
 
 @Component
@@ -38,5 +40,16 @@ public class Mapping {
     }
     public List<SupplierDTO> toSupplierDTOList(List<SupplierEntity> supplierEntities) {
         return mapper.map(supplierEntities, List.class);
+    }
+
+    //Employee Mapping
+    public EmployeeDTO toEmployeeDTO(EmployeeEntity employeeEntity) {
+        return  mapper.map(employeeEntity, EmployeeDTO.class);
+    }
+    public EmployeeEntity toEmployeeEntity(EmployeeDTO employeeDTO) {
+        return  mapper.map(employeeDTO, EmployeeEntity.class);
+    }
+    public List<EmployeeDTO> toEmployeeDTOList(List<EmployeeEntity> employeeEntities) {
+        return mapper.map(employeeEntities, List.class);
     }
 }
