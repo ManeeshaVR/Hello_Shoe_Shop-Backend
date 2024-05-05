@@ -1,4 +1,4 @@
-package com.example.shoe_shop_project;
+package software.vimukthirajapaksha.shoe_shop_project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
