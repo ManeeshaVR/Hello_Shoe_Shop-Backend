@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import software.vimukthirajapaksha.shoe_shop_project.dto.Category;
+import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Category;
 
 @AllArgsConstructor
 @NoArgsConstructor

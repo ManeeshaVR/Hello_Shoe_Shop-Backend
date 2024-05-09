@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import software.vimukthirajapaksha.shoe_shop_project.dto.Gender;
-import software.vimukthirajapaksha.shoe_shop_project.dto.Role;
+import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Gender;
+import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Role;
 
 import java.util.Date;
 

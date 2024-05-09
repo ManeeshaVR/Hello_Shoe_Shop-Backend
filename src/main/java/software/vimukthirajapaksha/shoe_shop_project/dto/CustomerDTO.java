@@ -3,6 +3,8 @@ package software.vimukthirajapaksha.shoe_shop_project.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Gender;
+import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Level;
 
 import java.util.Date;
 import java.sql.Timestamp;
