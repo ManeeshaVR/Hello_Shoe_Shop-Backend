@@ -8,6 +8,6 @@ public interface EmployeeService {
     EmployeeDTO saveEmployee(EmployeeDTO employeeDTO);
     void deleteEmployee(String employeeId);
     EmployeeDTO getSelectedEmployee(String employeeId);
-    List<EmployeeDTO> getAllEmployee();
+    List<EmployeeDTO> getAllEmployees();
     void updateEmployee(String employeeId,EmployeeDTO employeeDTO);
 }
