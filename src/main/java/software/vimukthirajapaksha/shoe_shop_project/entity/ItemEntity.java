@@ -29,6 +29,8 @@ public class ItemEntity implements SuperEntity{
     private OccasionType occasionType;
     @Enumerated(EnumType.STRING)
     private VerityType verityType;
+    private Double buyingPrice;
+    private Double sellingPrice;
     @OneToMany(mappedBy = "itemEntity", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ItemSizeEntity> itemSizeEntities;
@@ -36,5 +38,6 @@ public class ItemEntity implements SuperEntity{
     @JsonBackReference
     @JoinColumn(name = "supplierId", nullable = false)
     private SupplierEntity supplierEntity;
+
 }
 
