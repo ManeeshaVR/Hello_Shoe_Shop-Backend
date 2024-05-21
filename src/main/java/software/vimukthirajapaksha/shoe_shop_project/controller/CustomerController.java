@@ -3,20 +3,25 @@ package software.vimukthirajapaksha.shoe_shop_project.controller;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import software.vimukthirajapaksha.shoe_shop_project.dto.CustomerDTO;
+import software.vimukthirajapaksha.shoe_shop_project.exception.NotFoundException;
 import software.vimukthirajapaksha.shoe_shop_project.service.CustomerService;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/customer")
 @RequiredArgsConstructor
 public class CustomerController {
-    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
     private final CustomerService customerService;
+
 
     @GetMapping("/check")
     public String checkTest(){
@@ -24,35 +29,83 @@ public class CustomerController {
         return "Customer Check Test";
     }
 
-    @PostMapping
-    public CustomerDTO saveCustomer(@RequestBody CustomerDTO customer) {
-        logger.info("Saving customer: {}", customer);
-        return customerService.saveCustomer(customer);
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> saveCustomer(@Validated @RequestBody CustomerDTO customerDTO, BindingResult bindingResult){
+
+        if (bindingResult.hasErrors()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(bindingResult.getFieldErrors().get(0).getDefaultMessage());
+        }
+        logger.info("Received request for save a customer");
+        try {
+            customerService.saveCustomer(customerDTO);
+            logger.info("Request processed successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }catch (Exception e){
+            logger.error("An exception occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @GetMapping
-    public List<CustomerDTO> getAllCustomers() {
-        logger.info("Fetching all customers");
-        return customerService.getAllCustomers();
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllCustomers(){
+        logger.info("Received request for get All customers");
+        try {
+            return ResponseEntity.ok(customerService.getAllCustomers());
+        }catch (Exception e){
+            logger.error("An exception occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @GetMapping("/{id}")
-    public CustomerDTO getCustomerById(@PathVariable String id) {
-        logger.info("Fetching customer with ID: {}", id);
-        return customerService.getSelectedCustomer(id);
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<?> getSelectedCustomer(@PathVariable("id") String id){
+        logger.info("Received request for get a customer");
+        try {
+            return ResponseEntity.ok(customerService.getSelectedCustomer(id));
+        }catch (NotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch (Exception e){
+            logger.error("An exception occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable String id, @RequestBody CustomerDTO customerDTO) {
-        logger.info("Updating customer with ID: {}", id);
-        customerService.updateCustomer(id, customerDTO);
-        return ResponseEntity.ok().build();
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable("id") String id){
+        logger.info("Received request for delete a customer");
+        try {
+            customerService.deleteCustomer(id);
+            logger.info("Request processed successfully");
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }catch (NotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch (Exception e){
+            logger.error("An exception occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable String id) {
-        logger.info("Deleting customer with ID: {}", id);
-        customerService.deleteCustomer(id);
-        return ResponseEntity.ok().build();
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateCustomer(@PathVariable("id") String id,
+                                            @Validated @RequestBody CustomerDTO customerDTO,
+                                            BindingResult bindingResult)
+    {
+        logger.info("Received request for update a customer");
+        if (bindingResult.hasErrors()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(bindingResult.getFieldErrors().get(0).getDefaultMessage());
+        }
+        try {
+            customerService.updateCustomer(id, customerDTO);
+            logger.info("Request processed successfully");
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }catch (NotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch (Exception e){
+            logger.error("An exception occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
 }
