@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class InventoryServiceIMPL implements InventoryService {
+
     private final ItemRepo itemRepo;
     private final SupplierRepo supplierRepo;
     private final SizeRepo sizeRepo;
@@ -33,14 +34,15 @@ public class InventoryServiceIMPL implements InventoryService {
 
     @Override
     public void saveInventory(InventoryDTO inventoryDTO) {
-        //item save
+        //save item
+        inventoryDTO.setItemCode(generateItemCode(inventoryDTO));
         ItemEntity itemEntity = mapper.toItemEntity(inventoryDTO);
         SupplierEntity supplierEntity = supplierRepo.findById(inventoryDTO.getSupplierId())
                 .orElseThrow(() -> new NotFoundException("Supplier not found"));
         itemEntity.setSupplierEntity(supplierEntity);
         itemRepo.save(itemEntity);
 
-        //item size save
+        //save item size
         for (ItemSizeDTO itemSizeDTO : inventoryDTO.getItemSizeDTOS()) {
             ItemSizeEntity itemSizeEntity = new ItemSizeEntity();
             itemSizeEntity.setItemSizeId(UUID.randomUUID().toString());
@@ -145,12 +147,13 @@ public class InventoryServiceIMPL implements InventoryService {
         inventoryDTO.setSupplierName(itemEntity.getSupplierEntity().getSupplierName());
         inventoryDTO.setProfit(itemEntity.getSellingPrice() - itemEntity.getBuyingPrice());
         inventoryDTO.setProfitMargin((itemEntity.getSellingPrice() - itemEntity.getBuyingPrice())/itemEntity.getSellingPrice() * 100);
-        if ((totalQty / 7) > 10){
+        double averageQty = (double) totalQty / 7;
+        if (averageQty > 10) {
             inventoryDTO.setStatus("Available");
-        }else if (totalQty == 0){
-            inventoryDTO.setStatus("Not Available");
-        } else if ((totalQty / 7) <= 5){
+        } else if (averageQty >= 1) {
             inventoryDTO.setStatus("Low");
+        } else {
+            inventoryDTO.setStatus("Not Available");
         }
 
         return inventoryDTO;
@@ -219,4 +222,5 @@ public class InventoryServiceIMPL implements InventoryService {
         }
         return prefix + "00001";
     }
+
 }

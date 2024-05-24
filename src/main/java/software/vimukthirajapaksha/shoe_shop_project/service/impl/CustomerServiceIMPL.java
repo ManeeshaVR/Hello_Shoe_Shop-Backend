@@ -6,58 +6,58 @@ import org.springframework.stereotype.Service;
 import software.vimukthirajapaksha.shoe_shop_project.dao.CustomerRepo;
 import software.vimukthirajapaksha.shoe_shop_project.dto.CustomerDTO;
 import software.vimukthirajapaksha.shoe_shop_project.entity.CustomerEntity;
+import software.vimukthirajapaksha.shoe_shop_project.exception.NotFoundException;
 import software.vimukthirajapaksha.shoe_shop_project.service.CustomerService;
-import software.vimukthirajapaksha.shoe_shop_project.util.Mapping;
+import software.vimukthirajapaksha.shoe_shop_project.util.Mapper;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CustomerServiceIMPL implements CustomerService {
-    private final CustomerRepo repo;
-    private final Mapping mapping;
+
+    private final CustomerRepo customerRepo;
+    private final Mapper mapper;
 
     @Override
-    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
-//        customerDTO.setCustomerCode(UUID.randomUUID().toString());
-        return mapping.toCustomerDTO(repo.save(mapping.toCustomer(customerDTO)));
-    }
-
-    @Override
-    public void deleteCustomer(String customerId) {
-        repo.delete(repo.getReferenceById(customerId));
-    }
-
-    @Override
-    public CustomerDTO getSelectedCustomer(String customerId) {
-        return mapping.toCustomerDTO(repo.getReferenceById(customerId));
+    public void saveCustomer(CustomerDTO customerDTO) {
+        customerDTO.setCustomerId(UUID.randomUUID().toString());
+        customerDTO.setJoinedDate(Date.valueOf(LocalDate.now()));
+        customerRepo.save(mapper.toCustomerEntity(customerDTO));
     }
 
     @Override
     public List<CustomerDTO> getAllCustomers() {
-        return mapping.toCustomerDTOList(repo.findAll());
+        return mapper.toCustomerDTOList(customerRepo.findAll());
     }
 
     @Override
-    public void updateCustomer(String customerId, CustomerDTO customerDTO) {
-        CustomerEntity customer = repo.getReferenceById(customerId);
-        customer.setName(customerDTO.getName());
-        customer.setGender(customerDTO.getGender());
-        customer.setJoinDate(customerDTO.getJoinDate());
-        customer.setLevel(customerDTO.getLevel());
-        customer.setTotalPoints(customerDTO.getTotalPoints());
-        customer.setDob(customerDTO.getDob());
-        customer.setAddressNo(customerDTO.getAddressNo());
-        customer.setLane(customerDTO.getLane());
-        customer.setMainCity(customerDTO.getMainCity());
-        customer.setMainState(customerDTO.getMainState());
-        customer.setPostalCode(customerDTO.getPostalCode());
-        customer.setContactNumber(customerDTO.getContactNumber());
-
-        customer.setEmail(customerDTO.getEmail());
-        customer.setRecentPurchaseDate(customerDTO.getRecentPurchaseDate());
-        repo.save(customer);
+    public CustomerDTO getSelectedCustomer(String id) {
+        if (!customerRepo.existsById(id)) throw new NotFoundException("Customer not Found");
+        return mapper.toCustomerDTO(customerRepo.getReferenceById(id));
     }
+
+    @Override
+    public void deleteCustomer(String id) {
+        if (!customerRepo.existsById(id)) throw new NotFoundException("Customer not Found");
+        customerRepo.deleteById(id);
+    }
+
+    @Override
+    public void updateCustomer(String id, CustomerDTO customerDTO) {
+        Optional<CustomerEntity> customerEntity = customerRepo.findById(id);
+        if (customerEntity.isEmpty()) throw new NotFoundException("Customer Not Found");
+        customerEntity.get().setName(customerDTO.getName());
+        customerEntity.get().setGender(customerDTO.getGender());
+        customerEntity.get().setDob(customerDTO.getDob());
+        customerEntity.get().setAddress(customerDTO.getAddress());
+        customerEntity.get().setContact(customerDTO.getContact());
+        customerEntity.get().setEmail(customerDTO.getEmail());
+    }
+
 }
