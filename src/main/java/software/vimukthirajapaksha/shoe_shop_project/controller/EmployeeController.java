@@ -20,8 +20,8 @@ import software.vimukthirajapaksha.shoe_shop_project.util.UtilMatters;
 @RequestMapping("api/v1/employee")
 @RequiredArgsConstructor
 public class EmployeeController {
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
     private final EmployeeService employeeService;
 
     @GetMapping("/check")
@@ -110,4 +110,5 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

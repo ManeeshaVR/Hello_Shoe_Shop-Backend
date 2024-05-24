@@ -17,8 +17,8 @@ import software.vimukthirajapaksha.shoe_shop_project.service.SaleService;
 @RequiredArgsConstructor
 public class SaleController {
 
+    private static final Logger logger = LoggerFactory.getLogger(SaleController.class);
     private final SaleService saleService;
-    Logger logger = LoggerFactory.getLogger(SaleController.class);
 
     @GetMapping("/check")
     public String checkTest() {
@@ -42,4 +42,5 @@ public class SaleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

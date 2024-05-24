@@ -22,7 +22,6 @@ public class CustomerController {
     private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
     private final CustomerService customerService;
 
-
     @GetMapping("/check")
     public String checkTest(){
         logger.info("Customer Checked");
@@ -89,8 +88,7 @@ public class CustomerController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateCustomer(@PathVariable("id") String id,
                                             @Validated @RequestBody CustomerDTO customerDTO,
-                                            BindingResult bindingResult)
-    {
+                                            BindingResult bindingResult) {
         logger.info("Received request for update a customer");
         if (bindingResult.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

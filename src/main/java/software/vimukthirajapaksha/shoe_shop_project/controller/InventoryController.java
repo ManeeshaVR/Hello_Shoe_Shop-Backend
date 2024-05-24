@@ -25,16 +25,16 @@ public class InventoryController {
 
     @GetMapping("/check")
     public String checkTest() {
-        logger.info("Item Checked");
-        return "Item Check Test";
+        logger.info("Inventory Checked");
+        return "Inventory Check Test";
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> saveItem(@Valid @ModelAttribute("inventory") InventoryDTO inventoryDTO,
                                       @RequestPart("itemPicture") MultipartFile itemPicture,
-                                      Errors errors) {
+                                      Errors errors){
         logger.info("Received request for save a item");
-        if (errors.hasFieldErrors()) {
+        if (errors.hasFieldErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(errors.getFieldErrors().get(0).getDefaultMessage());
         }
@@ -45,7 +45,7 @@ public class InventoryController {
             inventoryService.saveInventory(inventoryDTO);
             logger.info("Request processed successfully");
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -53,39 +53,39 @@ public class InventoryController {
 
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllInventories() {
+    public ResponseEntity<?> getAllInventories(){
         logger.info("Received request for get All inventories");
         try {
             return ResponseEntity.ok(inventoryService.getAllInventories());
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getSelectedInventory(@PathVariable("id") String id) {
+    public ResponseEntity<?> getSelectedInventory(@PathVariable("id") String id){
         logger.info("Received request for get a inventory");
         try {
             return ResponseEntity.ok(inventoryService.getSelectedInventory(id));
-        } catch (NotFoundException e) {
+        }catch (NotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteInventory(@PathVariable("id") String id) {
+    public ResponseEntity<?> deleteInventory(@PathVariable("id") String id){
         logger.info("Received request for get a inventory");
         try {
             inventoryService.deleteInventory(id);
             logger.info("Request processed successfully");
             return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (NotFoundException e) {
+        }catch (NotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -94,9 +94,9 @@ public class InventoryController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> updateInventory(@PathVariable("id") String id,
                                              @Valid @ModelAttribute("inventory") InventoryDTO inventoryDTO,
-                                             Errors errors) {
+                                             Errors errors){
         logger.info("Received request for update a inventory");
-        if (errors.hasFieldErrors()) {
+        if (errors.hasFieldErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(errors.getFieldErrors().get(0).getDefaultMessage());
         }
@@ -105,11 +105,12 @@ public class InventoryController {
             inventoryService.updateInventory(id, inventoryDTO);
             logger.info("Request processed successfully");
             return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (NotFoundException e) {
+        }catch (NotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }
