@@ -4,16 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Role;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 public class UserDTO {
-    private String id;
-    private String firstName;
-    private String lastName;
+    private String userId;
     private String email;
     private String password;
-    private String role;
+    private Role role;
 }
