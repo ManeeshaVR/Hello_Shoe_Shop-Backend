@@ -19,7 +19,7 @@ public class Mapper {
     public CustomerDTO toCustomerDTO(CustomerEntity customer) {
         return  mapper.map(customer, CustomerDTO.class);
     }
-    public CustomerEntity toCustomer(CustomerDTO customerDTO) {
+    public CustomerEntity toCustomerEntity(CustomerDTO customerDTO) {
         return  mapper.map(customerDTO, CustomerEntity.class);
     }
     public List<CustomerDTO> toCustomerDTOList(List<CustomerEntity> customers) {
@@ -53,12 +53,12 @@ public class Mapper {
         return mapper.map(inventoryDTO, ItemEntity.class);
     }
 
-    //User Mapping
-    public UserEntity toUserEntity(UserDTO userDTO) {
+    //User
+    public UserEntity toUserEntity(UserDTO userDTO){
         return mapper.map(userDTO, UserEntity.class);
     }
     public UserDTO toUserDTO(UserEntity userEntity) {
-        return  mapper.map(userEntity, UserDTO.class);
+        return mapper.map(userEntity, UserDTO.class);
     }
 
     //Sale Mapping
