@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 public class ItemSizeDTO {
     private Integer size;
     private Integer qty;
-
 }

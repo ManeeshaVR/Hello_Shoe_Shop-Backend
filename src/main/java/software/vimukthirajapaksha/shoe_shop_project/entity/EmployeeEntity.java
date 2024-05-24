@@ -16,26 +16,21 @@ import java.util.Date;
 @Entity
 public class EmployeeEntity implements SuperEntity{
     @Id
-    private String employeeCode;
+    private String employeeId;
     private String name;
-    private String profilePicture;
+    @Column(columnDefinition = "LONGTEXT")
+    private String profilePic;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private String civilStatus;
-    private String Designation;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String civilState;
+    private String designation;
     private Date dob;
     private Date joinedDate;
-    private String attachedBranch;
-    private String addressNo;
-    private String lane;
-    private String mainCity;
-    private String mainState;
-    private String postalCode;
-    private String contactNumber;
-    @Column(unique = true)
+    private String address;
+    private String contact;
     private String email;
-    private String guardianName;
-    private String guardianContact;
+    private String guardian;
+    private String emergencyContact;
+    @Enumerated(EnumType.STRING)
+    private Role accessRole;
 }

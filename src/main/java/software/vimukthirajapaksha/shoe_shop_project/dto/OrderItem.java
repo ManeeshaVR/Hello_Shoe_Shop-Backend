@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class OrderItem {
     private String itemCode;
-    private String sizeId;
+    private Integer size;
     private Double unitPrice;
     private Integer itemQty;
 }

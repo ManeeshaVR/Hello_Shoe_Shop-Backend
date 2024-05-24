@@ -8,8 +8,7 @@ import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Embeddable
 public class SaleDetailsKey implements Serializable {
     @Column(name = "orderId")

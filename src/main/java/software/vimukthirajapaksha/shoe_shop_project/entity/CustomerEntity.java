@@ -1,5 +1,6 @@
 package software.vimukthirajapaksha.shoe_shop_project.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,7 @@ import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Level;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,22 +19,16 @@ import java.util.Date;
 @Entity
 public class CustomerEntity implements SuperEntity {
     @Id
-    private String customerCode;
+    private String customerId;
     private String name;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private Date joinDate;
-    @Enumerated(EnumType.STRING)
-    private Level level;
-    private int totalPoints;
+    private Date joinedDate;
     private Date dob;
-    private String addressNo;
-    private String lane;
-    private String mainCity;
-    private String mainState;
-    private String postalCode;
-    private String contactNumber;
-    @Column(unique = true)
+    private String address;
+    private String contact;
     private String email;
-    private Timestamp recentPurchaseDate;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<SaleEntity> saleEntities;
 }

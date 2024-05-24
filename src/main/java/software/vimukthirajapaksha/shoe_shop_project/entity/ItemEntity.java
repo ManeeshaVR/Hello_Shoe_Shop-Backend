@@ -38,6 +38,5 @@ public class ItemEntity implements SuperEntity{
     @JsonBackReference
     @JoinColumn(name = "supplierId", nullable = false)
     private SupplierEntity supplierEntity;
-
 }
 

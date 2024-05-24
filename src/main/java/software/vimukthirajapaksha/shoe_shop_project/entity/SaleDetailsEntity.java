@@ -6,8 +6,7 @@ import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "sale_details")
 public class SaleDetailsEntity {
