@@ -6,12 +6,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import software.vimukthirajapaksha.shoe_shop_project.dto.CustomerDTO;
 import software.vimukthirajapaksha.shoe_shop_project.exception.NotFoundException;
 import software.vimukthirajapaksha.shoe_shop_project.service.CustomerService;
+import software.vimukthirajapaksha.shoe_shop_project.service.EmailService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
@@ -21,6 +26,7 @@ public class CustomerController {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
     private final CustomerService customerService;
+    private final EmailService emailService;
 
     @GetMapping("/check")
     public String checkTest(){
@@ -103,6 +109,21 @@ public class CustomerController {
         }catch (Exception e){
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Scheduled(cron = "0 0 8 * * ?")
+    public void sendBirthdayWishes() {
+        LocalDate today = LocalDate.now();
+        List<CustomerDTO> customers = customerService.getAllCustomers();
+
+        for (CustomerDTO customer : customers) {
+            if (customer.getDob().equals(today)) {
+                String email = customer.getEmail();
+                String subject = "Happy Birthday!";
+                String text = "Dear " + customer.getName() + ",\n\nWishing you a very happy birthday!\n\nBest regards,\nHello Shoes PVT.LTD";
+                emailService.sendEmail(email, subject, text);
+            }
         }
     }
 
