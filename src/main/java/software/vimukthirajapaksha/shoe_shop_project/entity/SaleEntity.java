@@ -28,7 +28,7 @@ public class SaleEntity {
     private UserEntity user;
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "customerId", nullable = false)
+    @JoinColumn(name = "customerId", nullable = true)
     private CustomerEntity customer;
     @OneToMany(mappedBy = "saleEntity")
     @JsonManagedReference

@@ -10,4 +10,5 @@ public interface InventoryService {
     InventoryDTO getSelectedInventory(String inventoryId);
     void deleteInventory(String inventoryId);
     void updateInventory(String inventoryId, InventoryDTO inventoryDTO);
+    List<InventoryDTO> getSortedInventories(String sortBy);
 }
