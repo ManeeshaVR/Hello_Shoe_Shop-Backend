@@ -53,7 +53,7 @@ public class Mapper {
         return mapper.map(inventoryDTO, ItemEntity.class);
     }
 
-    //User
+    //User Mapping
     public UserEntity toUserEntity(UserDTO userDTO){
         return mapper.map(userDTO, UserEntity.class);
     }
@@ -65,4 +65,16 @@ public class Mapper {
     public SaleEntity toSaleEntity(SaleDTO saleDTO){
         return mapper.map(saleDTO, SaleEntity.class);
     }
+    public SaleDTO toSaleDTO(SaleEntity saleEntity){
+        return mapper.map(saleEntity, SaleDTO.class);
+    }
+    public List<SaleDTO> toSaleDTOList(List<SaleEntity> saleEntities){
+        return mapper.map(saleEntities, List.class);
+    }
+
+    //Refund Mapping
+    public RefundEntity toRefundEntity(RefundDTO refundDTO){
+        return mapper.map(refundDTO, RefundEntity.class);
+    }
+
 }

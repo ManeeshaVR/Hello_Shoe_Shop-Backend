@@ -10,15 +10,13 @@ import lombok.*;
 @Entity
 @Table(name = "sale_details")
 public class SaleDetailsEntity {
-    @EmbeddedId
-    private SaleDetailsKey id;
+    @Id
+    private String saleDetailsId;
     @ManyToOne
-    @MapsId("orderId")
     @JoinColumn(name = "orderId")
     @JsonBackReference
     private SaleEntity saleEntity;
     @ManyToOne
-    @MapsId("itemSizeId")
     @JoinColumn(name = "itemSizeId")
     @JsonBackReference
     private ItemSizeEntity itemSizeEntity;

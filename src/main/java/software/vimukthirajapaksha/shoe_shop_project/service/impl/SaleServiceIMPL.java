@@ -2,7 +2,9 @@ package software.vimukthirajapaksha.shoe_shop_project.service.impl;
 
 import software.vimukthirajapaksha.shoe_shop_project.dao.*;
 import software.vimukthirajapaksha.shoe_shop_project.dto.OrderItem;
+import software.vimukthirajapaksha.shoe_shop_project.dto.RefundDTO;
 import software.vimukthirajapaksha.shoe_shop_project.dto.SaleDTO;
+import software.vimukthirajapaksha.shoe_shop_project.dto.SaleDetailsDTO;
 import software.vimukthirajapaksha.shoe_shop_project.entity.*;
 import software.vimukthirajapaksha.shoe_shop_project.exception.NotFoundException;
 import software.vimukthirajapaksha.shoe_shop_project.service.SaleService;
@@ -12,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.vimukthirajapaksha.shoe_shop_project.util.Mapper;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,15 +31,19 @@ public class SaleServiceIMPL implements SaleService {
     private final ItemSizeRepo itemSizeRepo;
     private final SaleDetailsRepo saleDetailsRepo;
     private final SizeRepo sizeRepo;
+    private final RefundRepo refundRepo;
     private final Mapper mapper;
 
     @Override
     public void saveSale(SaleDTO saleDTO) {
-        saleDTO.setOrderId(UUID.randomUUID().toString());
-        UserEntity userEntity = userRepo.findById(saleDTO.getUserId())
+        saleDTO.setOrderId(generateNextOrderId());
+        UserEntity userEntity = userRepo.findByEmployeeId(saleDTO.getUserId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        CustomerEntity customerEntity = customerRepo.findById(saleDTO.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Customer not found"));
+        CustomerEntity customerEntity = null;
+        if (saleDTO.getCustomerId() != null) {
+            customerEntity = customerRepo.findById(saleDTO.getCustomerId())
+                    .orElseThrow(() -> new NotFoundException("Customer not found"));
+        }
 
         SaleEntity saleEntity = mapper.toSaleEntity(saleDTO);
         saleEntity.setCustomer(customerEntity);
@@ -56,13 +65,46 @@ public class SaleServiceIMPL implements SaleService {
 
     }
 
-    private static SaleDetailsEntity getSaleDetailsEntity(OrderItem orderItem, SaleEntity saleEntity, ItemSizeEntity itemSizeEntity) {
-        SaleDetailsKey saleDetailsKey = new SaleDetailsKey();
-        saleDetailsKey.setOrderId(saleEntity.getOrderId());
-        saleDetailsKey.setItemSizeId(itemSizeEntity.getItemSizeId());
+    @Override
+    public List<SaleDTO> getAllSales() {
+        return mapper.toSaleDTOList(saleRepo.findAll());
+    }
 
+    @Override
+    public List<SaleDetailsDTO> getSelectedSale(String id) {
+        List<SaleDetailsEntity> saleDetailsEntities = saleDetailsRepo.findSaleDetailsByOrderId(id);
+        if (saleDetailsEntities.isEmpty()) throw new NotFoundException("Sale Details not found");
+        List<SaleDetailsDTO> saleDetailsDTOS = new ArrayList<>();
+        for (SaleDetailsEntity saleDetailsEntity : saleDetailsEntities) {
+            SaleDetailsDTO saleDetailsDTO = new SaleDetailsDTO();
+            saleDetailsDTO.setItemCode(saleDetailsEntity.getItemSizeEntity().getItemEntity().getItemCode());
+            saleDetailsDTO.setItemDesc(saleDetailsEntity.getItemSizeEntity().getItemEntity().getItemDesc());
+            saleDetailsDTO.setItemPic(saleDetailsEntity.getItemSizeEntity().getItemEntity().getItemPic());
+            saleDetailsDTO.setSaleDetailsId(saleDetailsEntity.getSaleDetailsId());
+            saleDetailsDTO.setSize(saleDetailsEntity.getItemSizeEntity().getSizeEntity().getSize());
+            saleDetailsDTO.setQty(saleDetailsEntity.getQty());
+            saleDetailsDTO.setUnitPrice(saleDetailsEntity.getUnitPrice());
+            saleDetailsDTOS.add(saleDetailsDTO);
+        }
+        return saleDetailsDTOS;
+    }
+
+    @Override
+    public void saveRefund(RefundDTO refundDTO) {
+        SaleDetailsEntity saleDetailsEntity = saleDetailsRepo.findById(refundDTO.getSaleDetailsId())
+                .orElseThrow(() -> new NotFoundException("Sale Details not found"));
+        refundDTO.setRefundId(UUID.randomUUID().toString());
+        refundDTO.setDate(Timestamp.valueOf(LocalDateTime.now()));
+        RefundEntity refundEntity = mapper.toRefundEntity(refundDTO);
+        refundEntity.setSaleDetailsEntity(saleDetailsEntity);
+        refundRepo.save(refundEntity);
+
+        saleDetailsEntity.getItemSizeEntity().setQty(saleDetailsEntity.getItemSizeEntity().getQty() + refundDTO.getQty());
+    }
+
+    private static SaleDetailsEntity getSaleDetailsEntity(OrderItem orderItem, SaleEntity saleEntity, ItemSizeEntity itemSizeEntity) {
         SaleDetailsEntity saleDetailsEntity = new SaleDetailsEntity();
-        saleDetailsEntity.setId(saleDetailsKey);
+        saleDetailsEntity.setSaleDetailsId(UUID.randomUUID().toString());
         saleDetailsEntity.setSaleEntity(saleEntity);
         saleDetailsEntity.setItemSizeEntity(itemSizeEntity);
         saleDetailsEntity.setQty(orderItem.getItemQty());
@@ -70,4 +112,14 @@ public class SaleServiceIMPL implements SaleService {
         return saleDetailsEntity;
     }
 
+    public String generateNextOrderId() {
+        String maxOrderId = saleRepo.findLastOrderId();
+        if (maxOrderId == null) {
+            return "ORD-000001";
+        }
+
+        int lastNumber = Integer.parseInt(maxOrderId.substring(4));
+        int nextNumber = lastNumber + 1;
+        return String.format("ORD-%06d", nextNumber);
+    }
 }
