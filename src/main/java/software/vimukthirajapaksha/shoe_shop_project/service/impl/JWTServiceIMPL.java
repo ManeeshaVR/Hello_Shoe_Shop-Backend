@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import software.vimukthirajapaksha.shoe_shop_project.entity.UserEntity;
 import software.vimukthirajapaksha.shoe_shop_project.service.JWTService;
 
 import java.security.Key;
@@ -44,10 +45,12 @@ public class JWTServiceIMPL implements JWTService {
     }
 
     private String generateToken(Map<String,Object> extractClaims, UserDetails userDetails){
+        UserEntity userEntity = (UserEntity) userDetails;
         extractClaims.put("role",userDetails.getAuthorities());
+        extractClaims.put("employeeId",userEntity.getEmployeeEntity().getEmployeeId());
         Date now = new Date();
-        Date expire = new Date(now.getTime() + 1000 * 600);
-        Date refreshExpire = new Date(now.getTime() + 1000 * 600 * 600);
+        Date expire = new Date(now.getTime() + 1000 * 60 * 15);
+        Date refreshExpire = new Date(now.getTime() + 1000 * 60 * 60 * 24);
 
 
         String accessToken = Jwts.builder().setClaims(extractClaims)
