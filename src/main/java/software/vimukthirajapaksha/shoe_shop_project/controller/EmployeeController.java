@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,7 @@ public class EmployeeController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> saveEmployee(@Valid @ModelAttribute("employee") EmployeeDTO employeeDTO,
                                           @RequestPart("profilePicture") MultipartFile profilePicture,
                                           Errors errors) {
@@ -77,6 +79,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteEmployee(@PathVariable("id") String id){
         logger.info("Received request for delete a employee");
         try {
@@ -92,6 +95,7 @@ public class EmployeeController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateEmployee(@Valid @ModelAttribute("employee") EmployeeDTO employeeDTO,
                                             @PathVariable String id,
                                             Errors errors){
