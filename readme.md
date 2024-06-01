@@ -25,3 +25,9 @@ Welcome to the Shoe Store Management System API by Hello Shoes Pvt. Ltd. This AP
 ## License
 
 This project is licensed under the MIT License.
+
+
+## Document
+
+- **Entity Relationship Diagram:** [https://drive.google.com/file/d/1KGtrAMFQjf4B7N08WxssoL5BkjrZdAlM/view?usp=sharing](https://drive.google.com/file/d/1KGtrAMFQjf4B7N08WxssoL5BkjrZdAlM/view?usp=sharing)
+- **Class Diagram:** [https://drive.google.com/file/d/1Wr_DhrstgIE60oZDzUazTZZJMgSSheR-/view?usp=sharing](https://drive.google.com/file/d/1Wr_DhrstgIE60oZDzUazTZZJMgSSheR-/view?usp=sharing)
