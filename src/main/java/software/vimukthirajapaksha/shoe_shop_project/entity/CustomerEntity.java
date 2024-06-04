@@ -9,7 +9,7 @@ import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Gender;
 import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Level;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,6 +26,7 @@ public class CustomerEntity implements SuperEntity {
     private Date joinedDate;
     private Date dob;
     private String address;
+    @Column(unique = true)
     private String contact;
     private String email;
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)

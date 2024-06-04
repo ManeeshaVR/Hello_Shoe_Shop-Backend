@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Branch;
 import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Gender;
 import software.vimukthirajapaksha.shoe_shop_project.entity.enums.Role;
 
-import java.util.Date;
+import java.sql.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,9 +29,12 @@ public class EmployeeEntity implements SuperEntity{
     private Date joinedDate;
     private String address;
     private String contact;
+    @Column(unique = true)
     private String email;
     private String guardian;
     private String emergencyContact;
+    @Enumerated(EnumType.STRING)
+    private Branch branch;
     @Enumerated(EnumType.STRING)
     private Role accessRole;
 }

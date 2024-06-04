@@ -11,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import software.vimukthirajapaksha.shoe_shop_project.dto.CustomerDTO;
+import software.vimukthirajapaksha.shoe_shop_project.entity.CustomerEntity;
+import software.vimukthirajapaksha.shoe_shop_project.exception.DuplicateException;
 import software.vimukthirajapaksha.shoe_shop_project.exception.NotFoundException;
 import software.vimukthirajapaksha.shoe_shop_project.service.CustomerService;
 import software.vimukthirajapaksha.shoe_shop_project.service.EmailService;
@@ -46,6 +48,9 @@ public class CustomerController {
             customerService.saveCustomer(customerDTO);
             logger.info("Request processed successfully");
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (DuplicateException e){
+            logger.error("Duplicate contact error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }catch (Exception e){
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -63,7 +68,7 @@ public class CustomerController {
         }
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedCustomer(@PathVariable("id") String id){
         logger.info("Received request for get a customer");
         try {
@@ -94,7 +99,8 @@ public class CustomerController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateCustomer(@PathVariable("id") String id,
                                             @Validated @RequestBody CustomerDTO customerDTO,
-                                            BindingResult bindingResult) {
+                                            BindingResult bindingResult)
+    {
         logger.info("Received request for update a customer");
         if (bindingResult.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -112,19 +118,33 @@ public class CustomerController {
         }
     }
 
+    @GetMapping(value = "/contact", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getCustomerByContact(@RequestParam("contact") String contact){
+        logger.info("Received request for get a customer");
+        try {
+            return ResponseEntity.ok(customerService.getCustomerByContact(contact));
+        }catch (NotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }catch (Exception e){
+            logger.error("An exception occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @Scheduled(cron = "0 0 8 * * ?")
     public void sendBirthdayWishes() {
         LocalDate today = LocalDate.now();
         List<CustomerDTO> customers = customerService.getAllCustomers();
 
         for (CustomerDTO customer : customers) {
-            if (customer.getDob().equals(today)) {
+            if (customer.getDob().toLocalDate().equals(today)) {
                 String email = customer.getEmail();
                 String subject = "Happy Birthday!";
-                String text = "Dear " + customer.getName() + ",\n\nWishing you a very happy birthday!\n\nBest regards,\nHello Shoes PVT.LTD";
+                String text = "Dear " + customer.getName() + ",\n\nWishing you a very happy birthday!\n\nBest regards,\nYour Company Name";
                 emailService.sendEmail(email, subject, text);
             }
         }
     }
+
 
 }

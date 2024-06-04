@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import software.vimukthirajapaksha.shoe_shop_project.dao.EmployeeRepo;
 import software.vimukthirajapaksha.shoe_shop_project.dto.EmployeeDTO;
 import software.vimukthirajapaksha.shoe_shop_project.entity.EmployeeEntity;
+import software.vimukthirajapaksha.shoe_shop_project.exception.DuplicateException;
 import software.vimukthirajapaksha.shoe_shop_project.exception.NotFoundException;
 import software.vimukthirajapaksha.shoe_shop_project.service.EmployeeService;
 import software.vimukthirajapaksha.shoe_shop_project.util.Mapper;
@@ -24,6 +25,9 @@ public class EmployeeServiceIMPL implements EmployeeService {
 
     @Override
     public void saveEmployee(EmployeeDTO employeeDTO) {
+        if (employeeRepo.findByEmail(employeeDTO.getEmail()).isPresent()){
+            throw new DuplicateException("A employee with this email already exists");
+        }
         employeeDTO.setEmployeeId(UUID.randomUUID().toString());
         employeeRepo.save(mapper.toEmployeeEntity(employeeDTO));
     }

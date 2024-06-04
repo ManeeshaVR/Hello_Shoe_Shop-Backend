@@ -11,6 +11,7 @@ public interface SaleRepo extends JpaRepository<SaleEntity, String> {
     @Query("SELECT SUM(s.total) FROM SaleEntity s")
     Double findTotalSales();
 
-    @Query("SELECT SUM(s.total - sd.itemSizeEntity.itemEntity.buyingPrice * sd.qty) FROM SaleEntity s JOIN s.saleDetailsEntities sd")
+    @Query("SELECT SUM((sd.unitPrice - sd.itemSizeEntity.itemEntity.buyingPrice) * sd.qty) " +
+            "FROM SaleDetailsEntity sd")
     Double findTotalProfit();
 }

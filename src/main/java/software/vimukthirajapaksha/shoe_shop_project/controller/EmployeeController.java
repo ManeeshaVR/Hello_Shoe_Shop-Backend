@@ -11,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import software.vimukthirajapaksha.shoe_shop_project.dto.EmployeeDTO;
+import software.vimukthirajapaksha.shoe_shop_project.exception.DuplicateException;
 import software.vimukthirajapaksha.shoe_shop_project.exception.NotFoundException;
 import software.vimukthirajapaksha.shoe_shop_project.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -48,6 +49,9 @@ public class EmployeeController {
             employeeService.saveEmployee(employeeDTO);
             logger.info("Request processed successfully");
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (DuplicateException e){
+            logger.error("Duplicate email error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             logger.error("An exception occurred: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
